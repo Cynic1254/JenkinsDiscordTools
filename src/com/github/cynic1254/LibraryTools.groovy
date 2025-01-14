@@ -1,4 +1,4 @@
-﻿package com.github.cynic1254
+package com.github.cynic1254
 
 class LibraryTools {
     static Steps
