@@ -77,4 +77,24 @@ class DiscordMessage {
                 ]
         )
     }
+
+    static DiscordMessage Succeeded(Object steps) {
+        return BaseReportMessage(steps, ":white_check_mark: BUILD SUCCEEDED :white_check_mark:", "has succeeded", 65280)
+    }
+
+    static DiscordMessage Failed(Object steps) {
+        return BaseReportMessage(steps, ":x: BUILD FAILED :x:", "has failed", 16711680)
+    }
+
+    static DiscordMessage PartFailed(Object steps) {
+        return BaseReportMessage(steps, ":o: BUILD FAILED PARTIALLY :o:", "has partially failed", 16744192)
+    }
+
+    static DiscordMessage Unstable(Object steps) {
+        return BaseReportMessage(steps, ":warning: UNSTABLE BUILD :warning:", "is unstable", 16776960)
+    }
+
+    static DiscordMessage Aborted(Object steps) {
+        return BaseReportMessage(steps, ":stop_sign: BUILD ABORTED :stop_sign:", "has been aborted", 255)
+    }
 }
