@@ -2,6 +2,6 @@ package com.github.cynic1254
 
 class HelloWorld {
     void Print(Steps) {
-        Steps.echo("Test")
+        LibraryTools.Log("This is a secondary test")
     }
 }
