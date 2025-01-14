@@ -1,7 +1,9 @@
 package com.github.cynic1254
 
+import jenkins.Steps
+
 class HelloWorld {
     void Print() {
-        steps.println("Hello World")
+        Steps.echo("Test")
     }
 }
