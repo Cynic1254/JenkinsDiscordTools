@@ -1,6 +1,8 @@
 package com.github.cynic1254
 
 import com.github.cynic1254.DiscordMessage
+import com.github.cynic1254.DiscordMessage.Embed
+
 import groovy.json.JsonSlurper
 import groovy.xml.MarkupBuilder
 
@@ -64,13 +66,13 @@ class UnrealTestResult {
         message.avatar_url = "https://preview.redd.it/is-it-normal-for-games-to-have-a-unreal-engine-logo-as-its-v0-ekvife6ql3xc1.jpeg?auto=webp&s=fcec369f522ba22bc828c7c2672140eb965c51cb"
         message.username = "Unreal Test Result"
 
-        def embed = new DiscordMessage.Embed()
+        def embed = new Embed()
 
         if (failed > 0) {
             embed.title = "Some tests failed!"
             embed.description = "(${failed}/${failed + succeeded}) tests failed"
             embed.fields = GetFailedFields()
-            embed.footer = new DiscordMessage.Embed.Footer(
+            embed.footer = new Embed.Footer(
                     text: "Ran ${succeeded + failed} tests in ${String.format("%.4f", totalDuration)} seconds [full test results](${steps.env.BUILD_URL})"
             )
         }
@@ -169,18 +171,18 @@ class UnrealTestResult {
         )
     }
 
-    private List<DiscordMessage.Embed.Field> GetFailedFields() {
-        List<DiscordMessage.Embed.Field> fields = []
+    private List<Embed.Field> GetFailedFields() {
+        List<Embed.Field> fields = []
 
         for (i in 0..<failed) {
             def test = tests[i]
-            fields.add(new DiscordMessage.Embed.Field(
+            fields.add(new Embed.Field(
                     name: test.testDisplayName,
                     value: "${test.state} after ${String.format('%.4f', test.duration)} seconds"
             ))
 
             for(entry in test.entries) {
-                fields.add(new DiscordMessage.Embed.Field(
+                fields.add(new Embed.Field(
                         name: entry.event.type,
                         value: entry.event.message,
                         inline: true
@@ -190,7 +192,7 @@ class UnrealTestResult {
 
         if (fields.size() > 25) {
             fields = fields.subList(0, 24)
-            fields.add(new DiscordMessage.Embed.Field(
+            fields.add(new Embed.Field(
                     name: "Shortening List due to field limit",
                     value: "..."
             ))
