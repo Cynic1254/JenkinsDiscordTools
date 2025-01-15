@@ -55,24 +55,26 @@ class DiscordMessage {
     }
 
     static DiscordMessage FromTestResults(Objects steps, UnrealTestResult testResults) {
-        def message = new DiscordMessage()
-        message.avatar_url = "https://preview.redd.it/is-it-normal-for-games-to-have-a-unreal-engine-logo-as-its-v0-ekvife6ql3xc1.jpeg?auto=webp&s=fcec369f522ba22bc828c7c2672140eb965c51cb"
-        message.username = "Unreal Test Result"
+        steps.echo("Building Discord Message!")
 
         def embed = new Embed()
 
         if (testResults.failed > 0) {
             embed.title = "Some tests failed!"
             embed.description = "(${testResults.failed}/${testResults.failed + testResults.succeeded}) tests failed"
+            steps.echo("Building Fields")
             embed.fields = ParseTestResultFields(testResults)
             embed.footer = new Embed.Footer(
                     text: "Ran ${testResults.succeeded + testResults.failed} tests in ${String.format("%.4f", testResults.totalDuration)} seconds [full test results](${steps.env.BUILD_URL})"
             )
         }
 
-        message.embeds = [embed]
-
-        return message
+        steps.echo("Finished building, returning object...")
+        return new DiscordMessage(
+                avatar_url: "https://preview.redd.it/is-it-normal-for-games-to-have-a-unreal-engine-logo-as-its-v0-ekvife6ql3xc1.jpeg?auto=webp&s=fcec369f522ba22bc828c7c2672140eb965c51cb",
+                username: "Unreal Test Result",
+                embeds: [embed]
+        )
     }
 
     private static List<Embed.Field> ParseTestResultFields(UnrealTestResult results) {
