@@ -6,7 +6,7 @@ class DiscordMessage {
     String username = null
     String avatar_url = null
     String content = null
-    List<Embed> embeds = null
+    List<Embed> embeds = []
     Boolean tts = null
     Mentions allowed_mentions = null
 
@@ -16,7 +16,7 @@ class DiscordMessage {
         String title = null
         String url = null
         String description = null
-        List<Field> fields = null
+        List<Field> fields = []
         URL thumbnail = null
         URL image = null
         Footer footer = null
@@ -45,9 +45,9 @@ class DiscordMessage {
     }
 
     static class Mentions {
-        List<String> parse = null
-        List<String> roles = null
-        List<String> users = null
+        List<String> parse = []
+        List<String> roles = []
+        List<String> users = []
     }
 
     void Send(Object steps, String webhook) {
@@ -62,16 +62,16 @@ class DiscordMessage {
                                 color: color,
                                 fields: [
                                         new Embed.Field(
-                                                name: "${steps.env.config}${steps.env.platform} ${steps.env.JOB_BASE_NAME} ${state}",
+                                                name: "${Unreal.config}${Unreal.platform} ${Jenkins.jobBaseName} ${state}",
                                                 value: "Last Changelist: ${steps.env.P4_CHANGELIST}"
                                         ),
                                         new Embed.Field(
                                                 name: "Job url",
-                                                value: "${steps.env.BUILD_URL}"
+                                                value: "${Jenkins.buildURL}"
                                         )
                                 ],
                                 footer: new Embed.Footer(
-                                        text: "${steps.env.JOB_BASE_NAME} (${steps.env.BUILD_NUMBER})"
+                                        text: "${Jenkins.jobBaseName} (${Jenkins.buildNumber})"
                                 )
                         )
                 ]
