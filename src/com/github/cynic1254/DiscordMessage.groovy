@@ -60,8 +60,14 @@ class DiscordMessage {
     static Mentions CreateMentions(Map args = [:]) {
         return new Mentions(args)
     }
+    static Embed.Author CreateAuthor(Map args = [:]) {
+        return new Embed.Author(args)
+    }
     static Embed.Field CreateField(Map args = [:]) {
         return new Embed.Field(args)
+    }
+    static Embed.URL CreateURL(Map args = [:]) {
+        return new Embed.URL()
     }
     static Embed.Footer CreateFooter(Map args = [:]) {
         return new Embed.Footer(args)

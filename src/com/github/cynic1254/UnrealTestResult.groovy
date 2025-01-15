@@ -170,18 +170,18 @@ class UnrealTestResult {
         )
     }
 
-    private List<DiscordMessage.Embed.Field> GetFailedFields() {
-        List<DiscordMessage.Embed.Field> fields = []
+    private List GetFailedFields() {
+        List fields = []
 
         for (i in 0..<failed) {
             def test = tests[i]
-            fields.add(new DiscordMessage.Embed.Field(
+            fields.add(DiscordMessage.CreateField(
                     name: test.testDisplayName,
                     value: "${test.state} after ${String.format('%.4f', test.duration)} seconds"
             ))
 
             for(entry in test.entries) {
-                fields.add(new DiscordMessage.Embed.Field(
+                fields.add(DiscordMessage.CreateField(
                         name: entry.event.type,
                         value: entry.event.message,
                         inline: true
@@ -191,7 +191,7 @@ class UnrealTestResult {
 
         if (fields.size() > 25) {
             fields = fields.subList(0, 24)
-            fields.add(new DiscordMessage.Embed.Field(
+            fields.add(DiscordMessage.CreateField(
                     name: "Shortening List due to field limit",
                     value: "..."
             ))
