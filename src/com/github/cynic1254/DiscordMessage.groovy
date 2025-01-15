@@ -59,7 +59,7 @@ class DiscordMessage {
         DiscordMessage.metaClass.methods.each { method -> steps.echo("${method.name}(${method.parameterTypes*.name.join(', ')})")}
     }
 
-    static DiscordMessage FromTestResults(Objects steps, UnrealTestResult testResults) {
+    static DiscordMessage FromTestResults(Object steps, UnrealTestResult testResults) {
         steps.echo("Building Discord Message!")
 
         def embed = new Embed()
