@@ -1,5 +1,6 @@
 package com.github.cynic1254
 
+import com.github.cynic1254.DiscordMessage
 import groovy.json.JsonSlurper
 import groovy.xml.MarkupBuilder
 
