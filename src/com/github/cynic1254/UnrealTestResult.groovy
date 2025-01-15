@@ -1,9 +1,5 @@
 package com.github.cynic1254
 
-import com.github.cynic1254.DiscordMessage
-import com.github.cynic1254.DiscordMessage.Embed
-import com.github.cynic1254.DiscordMessage.Embed.Field
-import com.github.cynic1254.DiscordMessage.Embed.Footer
 
 import groovy.json.JsonSlurper
 import groovy.xml.MarkupBuilder
@@ -68,13 +64,13 @@ class UnrealTestResult {
         message.avatar_url = "https://preview.redd.it/is-it-normal-for-games-to-have-a-unreal-engine-logo-as-its-v0-ekvife6ql3xc1.jpeg?auto=webp&s=fcec369f522ba22bc828c7c2672140eb965c51cb"
         message.username = "Unreal Test Result"
 
-        def embed = new Embed()
+        def embed = new DiscordMessage_Embed()
 
         if (failed > 0) {
             embed.title = "Some tests failed!"
             embed.description = "(${failed}/${failed + succeeded}) tests failed"
             embed.fields = GetFailedFields()
-            embed.footer = new Footer(
+            embed.footer = new DiscordMessage_Embed_Footer(
                     text: "Ran ${succeeded + failed} tests in ${String.format("%.4f", totalDuration)} seconds [full test results](${steps.env.BUILD_URL})"
             )
         }
@@ -173,18 +169,18 @@ class UnrealTestResult {
         )
     }
 
-    private List<Field> GetFailedFields() {
-        List<Field> fields = []
+    private List<DiscordMessage_Embed_Field> GetFailedFields() {
+        List<DiscordMessage_Embed_Field> fields = []
 
         for (i in 0..<failed) {
             def test = tests[i]
-            fields.add(new Field(
+            fields.add(new DiscordMessage_Embed_Field(
                     name: test.testDisplayName,
                     value: "${test.state} after ${String.format('%.4f', test.duration)} seconds"
             ))
 
             for(entry in test.entries) {
-                fields.add(new Field(
+                fields.add(new DiscordMessage_Embed_Field(
                         name: entry.event.type,
                         value: entry.event.message,
                         inline: true
@@ -194,7 +190,7 @@ class UnrealTestResult {
 
         if (fields.size() > 25) {
             fields = fields.subList(0, 24)
-            fields.add(new Field(
+            fields.add(new DiscordMessage_Embed_Field(
                     name: "Shortening List due to field limit",
                     value: "..."
             ))
