@@ -55,6 +55,10 @@ class DiscordMessage {
         steps.bat(label: "Send Discord Message", script: "curl -X POST -H \"Content-Type: application/json\" -d \"${JsonOutput.toJson(this).replace('"', '""')}\" ${webhook}")
     }
 
+    static void PrintMethods(Object steps) {
+        DiscordMessage.metaClass.methods.each { method -> steps.echo("${method.name}(${method.parameterTypes*.name.join(', ')})")}
+    }
+
     static DiscordMessage FromTestResults(Objects steps, UnrealTestResult testResults) {
         steps.echo("Building Discord Message!")
 
