@@ -1,5 +1,6 @@
 package com.github.cynic1254
 
+import com.github.cynic1254.UnrealTestResult
 import groovy.json.JsonOutput
 
 class DiscordMessage {
