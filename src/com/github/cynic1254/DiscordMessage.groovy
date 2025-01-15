@@ -54,23 +54,55 @@ class DiscordMessage {
         steps.bat(label: "Send Discord Message", script: "curl -X POST -H \"Content-Type: application/json\" -d \"${JsonOutput.toJson(this).replace('"', '""')}\" ${webhook}")
     }
 
-    static Embed CreateEmbed(Map args = [:]) {
-        return new Embed(args)
+    static DiscordMessage FromTestResults(Objects steps, UnrealTestResult testResults) {
+        def message = new DiscordMessage()
+        message.avatar_url = "https://preview.redd.it/is-it-normal-for-games-to-have-a-unreal-engine-logo-as-its-v0-ekvife6ql3xc1.jpeg?auto=webp&s=fcec369f522ba22bc828c7c2672140eb965c51cb"
+        message.username = "Unreal Test Result"
+
+        def embed = new Embed()
+
+        if (testResults.failed > 0) {
+            embed.title = "Some tests failed!"
+            embed.description = "(${testResults.failed}/${testResults.failed + testResults.succeeded}) tests failed"
+            embed.fields = ParseTestResultFields(testResults)
+            embed.footer = new Embed.Footer(
+                    text: "Ran ${testResults.succeeded + testResults.failed} tests in ${String.format("%.4f", testResults.totalDuration)} seconds [full test results](${steps.env.BUILD_URL})"
+            )
+        }
+
+        message.embeds = [embed]
+
+        return message
     }
-    static Mentions CreateMentions(Map args = [:]) {
-        return new Mentions(args)
-    }
-    static Embed.Author CreateAuthor(Map args = [:]) {
-        return new Embed.Author(args)
-    }
-    static Embed.Field CreateField(Map args = [:]) {
-        return new Embed.Field(args)
-    }
-    static Embed.URL CreateURL(Map args = [:]) {
-        return new Embed.URL()
-    }
-    static Embed.Footer CreateFooter(Map args = [:]) {
-        return new Embed.Footer(args)
+
+    private static List<Embed.Field> ParseTestResultFields(UnrealTestResult results) {
+        List<Embed.Field> fields = []
+
+        for (i in 0..< results.failed) {
+            def test = results.tests[i]
+            fields.add(new Embed.Field(
+                    name: test.testDisplayName,
+                    value: "${test.state} after ${String.format('%.4f', test.duration)} seconds"
+            ))
+
+            for(entry in test.entries) {
+                fields.add(new Embed.Field(
+                        name: entry.event.type,
+                        value: entry.event.message,
+                        inline: true
+                ))
+            }
+        }
+
+        if (fields.size() > 25) {
+            fields = fields.subList(0, 24)
+            fields.add(new Embed.Field(
+                    name: "Shortening List due to field limit",
+                    value: "..."
+            ))
+        }
+
+        return fields
     }
 
     static DiscordMessage BaseReportMessage(Object steps, String header, String state, Integer color = null) {

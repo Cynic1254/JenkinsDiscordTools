@@ -60,27 +60,6 @@ class UnrealTestResult {
         }
     }
 
-    DiscordMessage ToDiscordMessage(Object steps) {
-        def message = new DiscordMessage()
-        message.avatar_url = "https://preview.redd.it/is-it-normal-for-games-to-have-a-unreal-engine-logo-as-its-v0-ekvife6ql3xc1.jpeg?auto=webp&s=fcec369f522ba22bc828c7c2672140eb965c51cb"
-        message.username = "Unreal Test Result"
-
-        def embed = DiscordMessage.CreateEmbed()
-
-        if (failed > 0) {
-            embed.title = "Some tests failed!"
-            embed.description = "(${failed}/${failed + succeeded}) tests failed"
-            embed.fields = GetFailedFields()
-            embed.footer = DiscordMessage.CreateFooter(
-                    text: "Ran ${succeeded + failed} tests in ${String.format("%.4f", totalDuration)} seconds [full test results](${steps.env.BUILD_URL})"
-            )
-        }
-
-        message.embeds = [embed]
-
-        return message
-    }
-
     String WriteXMLToFile(Object steps, String FilePath) {
         steps.writeFile(file: FilePath, text: ToXML())
 
@@ -168,35 +147,5 @@ class UnrealTestResult {
                 comparisonExported: parsed.comparisonExported,
                 comparisonExportDirectory: parsed.comparisonExportDirectory
         )
-    }
-
-    private List GetFailedFields() {
-        List fields = []
-
-        for (i in 0..<failed) {
-            def test = tests[i]
-            fields.add(DiscordMessage.CreateField(
-                    name: test.testDisplayName,
-                    value: "${test.state} after ${String.format('%.4f', test.duration)} seconds"
-            ))
-
-            for(entry in test.entries) {
-                fields.add(DiscordMessage.CreateField(
-                        name: entry.event.type,
-                        value: entry.event.message,
-                        inline: true
-                ))
-            }
-        }
-
-        if (fields.size() > 25) {
-            fields = fields.subList(0, 24)
-            fields.add(DiscordMessage.CreateField(
-                    name: "Shortening List due to field limit",
-                    value: "..."
-            ))
-        }
-
-        return fields
     }
 }
