@@ -64,6 +64,7 @@ class UnrealTestResult {
         return FilePath
     }
 
+    @NonCPS
     String ToXML() {
         def sw = new StringWriter()
         def builder = new MarkupBuilder( sw )
