@@ -71,7 +71,7 @@ class UnrealTestResult {
             embed.title = "Some tests failed!"
             embed.description = "(${failed}/${failed + succeeded}) tests failed"
             embed.fields = GetFailedFields()
-            embed.footer = new DiscordMessage.Embed.Footer(
+            embed.footer = DiscordMessage.CreateFooter(
                     text: "Ran ${succeeded + failed} tests in ${String.format("%.4f", totalDuration)} seconds [full test results](${steps.env.BUILD_URL})"
             )
         }

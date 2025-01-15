@@ -54,8 +54,17 @@ class DiscordMessage {
         steps.bat(label: "Send Discord Message", script: "curl -X POST -H \"Content-Type: application/json\" -d \"${JsonOutput.toJson(this).replace('"', '""')}\" ${webhook}")
     }
 
-    static Embed CreateEmbed() {
-        return new Embed()
+    static Embed CreateEmbed(Map args = [:]) {
+        return new Embed(args)
+    }
+    static Mentions CreateMentions(Map args = [:]) {
+        return new Mentions(args)
+    }
+    static Embed.Field CreateField(Map args = [:]) {
+        return new Embed.Field(args)
+    }
+    static Embed.Footer CreateFooter(Map args = [:]) {
+        return new Embed.Footer(args)
     }
 
     static DiscordMessage BaseReportMessage(Object steps, String header, String state, Integer color = null) {
