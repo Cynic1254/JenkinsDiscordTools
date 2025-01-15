@@ -55,26 +55,23 @@ class DiscordMessage {
         steps.bat(label: "Send Discord Message", script: "curl -X POST -H \"Content-Type: application/json\" -d \"${JsonOutput.toJson(this).replace('"', '""')}\" ${webhook}")
     }
 
-    static void PrintMethods(Object steps) {
-        DiscordMessage.metaClass.methods.each { method -> steps.echo("${method.name}(${method.parameterTypes*.name.join(', ')})")}
-    }
-
-    static DiscordMessage FromTestResults(Object steps, UnrealTestResult testResults) {
-        steps.echo("Building Discord Message!")
-
-        def embed = new Embed()
+    static DiscordMessage FromTestResults(Object steps, UnrealTestResult testResults) {def embed = new Embed()
 
         if (testResults.failed > 0) {
             embed.title = "Some tests failed!"
+            embed.color = 16776960
             embed.description = "(${testResults.failed}/${testResults.failed + testResults.succeeded}) tests failed"
-            steps.echo("Building Fields")
             embed.fields = ParseTestResultFields(testResults)
-            embed.footer = new Embed.Footer(
-                    text: "Ran ${testResults.succeeded + testResults.failed} tests in ${String.format("%.4f", testResults.totalDuration)} seconds [full test results](${steps.env.BUILD_URL})"
-            )
+        } else {
+            embed.title = "All tests succeeded!"
+            embed.color = 65280
+            embed.description = "Successfully ran all tests"
         }
 
-        steps.echo("Finished building, returning object...")
+        embed.footer = new Embed.Footer(
+                text: "Ran ${testResults.succeeded + testResults.failed} tests in ${String.format("%.4f", testResults.totalDuration)} seconds [full test results](${steps.env.BUILD_URL})"
+        )
+
         return new DiscordMessage(
                 avatar_url: "https://preview.redd.it/is-it-normal-for-games-to-have-a-unreal-engine-logo-as-its-v0-ekvife6ql3xc1.jpeg?auto=webp&s=fcec369f522ba22bc828c7c2672140eb965c51cb",
                 username: "Unreal Test Result",
