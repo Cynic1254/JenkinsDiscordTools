@@ -64,6 +64,7 @@ class UnrealTestResult {
         return FilePath
     }
 
+    // adapted from https://www.emidee.net/ue4/2018/11/13/UE4-Unit-Tests-in-Jenkins.html
     @NonCPS
     String ToXML() {
         def sw = new StringWriter()
