@@ -67,16 +67,33 @@ class UnrealTestResult {
     @NonCPS
     String ToXML() {
         def sw = new StringWriter()
-        def builder = new MarkupBuilder( sw )
+        def builder = new MarkupBuilder(sw)
 
         builder.doubleQuotes = true
         builder.mkp.xmlDeclaration version: "1.0", encoding: "utf-8"
 
-        builder.testsuite( tests: succeeded + failed, failures: failed, time: totalDuration ) {
-            for ( test in tests ) {
-                builder.testcase( name: test.testDisplayName, classname: test.fullTestPath, status: test.state ) {
-                    for ( entry in test.entries ) {
-                        builder.failure( message: entry.event.message, type: entry.event.type, entry.filename + " " + entry.lineNumber )
+        builder.testsuite(tests: succeeded + failed, failures: failed, time: totalDuration, timestamp: reportCreatedOn) {
+            for (test in tests) {
+                builder.testcase(name: test.testDisplayName, classname: test.fullTestPath, status: test.state, time: test.duration) {
+                    // Handle the test state
+                    if (test.state == "Skipped") {
+                        builder.skipped()
+                    } else if (test.state == "Failed") {
+                        builder.failure(message: "Test failed", type: "TestFailure")
+                    }
+
+                    // Add entries only if relevant and ensure they're not automatically marked as failures
+                    for (entry in test.entries) {
+                        if (entry.event.type == "Error" || entry.event.type == "Failure") {
+                            builder.failure(message: entry.event.message, type: entry.event.type) {
+                                builder.text("${entry.filename} ${entry.lineNumber}")
+                            }
+                        } else {
+                            // Optional: log other entry types as information (not as failures)
+                            builder.systemOut {
+                                builder.text("${entry.event.message} (${entry.filename}:${entry.lineNumber})")
+                            }
+                        }
                     }
                 }
             }
