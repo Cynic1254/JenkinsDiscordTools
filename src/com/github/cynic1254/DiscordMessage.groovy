@@ -69,7 +69,7 @@ class DiscordMessage {
         }
 
         embed.footer = new Embed.Footer(
-                text: "Ran ${testResults.succeeded + testResults.failed} tests in ${String.format("%.4f", testResults.totalDuration)} seconds [full test results](${steps.env.BUILD_URL})"
+                text: "Ran ${testResults.succeeded + testResults.failed} tests in ${String.format("%.4f", testResults.totalDuration)} seconds. full test results: ${steps.env.BUILD_URL}"
         )
 
         return new DiscordMessage(
