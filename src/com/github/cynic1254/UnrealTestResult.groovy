@@ -86,14 +86,10 @@ class UnrealTestResult {
                     // Add entries only if relevant and ensure they're not automatically marked as failures
                     for (entry in test.entries) {
                         if (entry.event.type == "Error" || entry.event.type == "Failure") {
-                            builder.failure(message: entry.event.message, type: entry.event.type) {
-                                builder.text("${entry.filename} ${entry.lineNumber}")
-                            }
+                            builder.failure(message: entry.event.message, type: entry.event.type, "${entry.filename} ${entry.lineNumber}")
                         } else {
                             // Optional: log other entry types as information (not as failures)
-                            builder.systemOut {
-                                builder.text("${entry.event.message} (${entry.filename}:${entry.lineNumber})")
-                            }
+                            builder.systemOut("${entry.event.message} (${entry.filename}:${entry.lineNumber})")
                         }
                     }
                 }
