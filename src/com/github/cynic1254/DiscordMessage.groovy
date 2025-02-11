@@ -1,6 +1,6 @@
 package com.github.cynic1254
 
-import com.github.cynic1254.UnrealTestResult
+
 import groovy.json.JsonOutput
 
 class DiscordMessage {
@@ -51,11 +51,11 @@ class DiscordMessage {
         List<String> users = []
     }
 
-    void Send(Object steps, String webhook) {
-        steps.bat(label: "Send Discord Message", script: "curl -X POST -H \"Content-Type: application/json\" -d \"${JsonOutput.toJson(this).replace('"', '""')}\" ${webhook}")
+    void Send(String webhook) {
+        Library.steps.bat(label: "Send Discord Message", script: "curl -X POST -H \"Content-Type: application/json\" -d \"${JsonOutput.toJson(this).replace('"', '""')}\" ${webhook}")
     }
 
-    static DiscordMessage FromTestResults(Object steps, UnrealTestResult testResults) {def embed = new Embed()
+    static DiscordMessage FromTestResults(UnrealTestResult testResults) {def embed = new Embed()
 
         if (testResults.failed > 0) {
             embed.title = "Some tests failed!"
@@ -69,7 +69,7 @@ class DiscordMessage {
         }
 
         embed.footer = new Embed.Footer(
-                text: "Ran ${testResults.succeeded + testResults.failed} tests in ${String.format("%.4f", testResults.totalDuration)} seconds. full test results: ${steps.env.BUILD_URL}"
+                text: "Ran ${testResults.succeeded + testResults.failed} tests in ${String.format("%.4f", testResults.totalDuration)} seconds. full test results: ${Library.steps.env.BUILD_URL}"
         )
 
         return new DiscordMessage(
@@ -109,7 +109,7 @@ class DiscordMessage {
         return fields
     }
 
-    static DiscordMessage BaseReportMessage(Object steps, String header, String state, Integer color = null) {
+    static DiscordMessage BaseReportMessage(String header, String state, Integer color = null) {
         return new DiscordMessage(
                 embeds: [
                         new Embed(
@@ -118,7 +118,7 @@ class DiscordMessage {
                                 fields: [
                                         new Embed.Field(
                                                 name: "${Unreal.config}${Unreal.platform} ${Jenkins.jobBaseName} ${state}",
-                                                value: "Last Changelist: ${steps.env.P4_CHANGELIST}"
+                                                value: "Last Changelist: ${Library.steps.env.P4_CHANGELIST}"
                                         ),
                                         new Embed.Field(
                                                 name: "Job url",
@@ -133,23 +133,74 @@ class DiscordMessage {
         )
     }
 
-    static DiscordMessage Succeeded(Object steps) {
-        return BaseReportMessage(steps, ":white_check_mark: BUILD SUCCEEDED :white_check_mark:", "has succeeded", 65280)
+    static DiscordMessage Succeeded() {
+        return BaseReportMessage(":white_check_mark: BUILD SUCCEEDED :white_check_mark:", "has succeeded", 65280)
     }
 
-    static DiscordMessage Failed(Object steps) {
-        return BaseReportMessage(steps, ":x: BUILD FAILED :x:", "has failed", 16711680)
+    static DiscordMessage Failed() {
+        return BaseReportMessage(":x: BUILD FAILED :x:", "has failed", 16711680)
     }
 
-    static DiscordMessage PartFailed(Object steps) {
-        return BaseReportMessage(steps, ":o: BUILD FAILED PARTIALLY :o:", "has partially failed", 16744192)
+    static DiscordMessage PartFailed() {
+        return BaseReportMessage(":o: BUILD FAILED PARTIALLY :o:", "has partially failed", 16744192)
     }
 
-    static DiscordMessage Unstable(Object steps) {
-        return BaseReportMessage(steps, ":warning: UNSTABLE BUILD :warning:", "is unstable", 16776960)
+    static DiscordMessage Unstable() {
+        return BaseReportMessage(":warning: UNSTABLE BUILD :warning:", "is unstable", 16776960)
     }
 
-    static DiscordMessage Aborted(Object steps) {
-        return BaseReportMessage(steps, ":stop_sign: BUILD ABORTED :stop_sign:", "has been aborted", 255)
+    static DiscordMessage Aborted() {
+        return BaseReportMessage(":stop_sign: BUILD ABORTED :stop_sign:", "has been aborted", 255)
+    }
+
+    static DiscordMessage SteamPushStarted(String AuthorizerID) {
+        return new DiscordMessage(
+                embeds: [
+                        new Embed(
+                                title: "Started push to steam",
+                                color: 	16777215, //white
+                                fields: [
+                                        new Embed.Field(
+                                                name: "Push to Steam has been initiated, SteamGuard Authorization might be required",
+                                                value: "${Library.steps.env.BUILD_URL}"
+                                        ),
+                                        new Embed.Field(
+                                                name: "Authorizer:",
+                                                value: "<@${AuthorizerID}>"
+                                        )
+                                ],
+                                footer: new Embed.Footer(
+                                        text: Library.steps.env.JOB_BASE_NAME as String
+                                )
+                        )
+                ],
+                allowed_mentions: new Mentions(
+                        users: [AuthorizerID]
+                ),
+                username: "Steam Auth",
+                avatar_url: "https://e1.pngegg.com/pngimages/855/514/png-clipart-clay-os-6-a-macos-icon-steam-steam-logo-thumbnail.png"
+        )
+    }
+
+    static DiscordMessage SteamPushFailed() {
+        return new DiscordMessage(
+                username: "Steam Auth",
+                avatar_url: "https://e1.pngegg.com/pngimages/855/514/png-clipart-clay-os-6-a-macos-icon-steam-steam-logo-thumbnail.png",
+                embeds: [
+                        new Embed(
+                                title: "Steam Authorization Timed Out",
+                                color: 	16777215, //white
+                                fields: [
+                                        new Embed.Field(
+                                                name: "Steam Authorization was not provided in time, Build has not been uploaded to steam, will be uploaded to GDrive instead",
+                                                value: "${Library.steps.env.BUILD_URL}"
+                                        )
+                                ],
+                                footer: new Embed.Footer(
+                                        text: Library.steps.env.JOB_BASE_NAME as String
+                                )
+                        )
+                ]
+        )
     }
 }

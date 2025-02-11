@@ -58,8 +58,8 @@ class UnrealTestResult {
         }
     }
 
-    String WriteXMLToFile(Object steps, String FilePath) {
-        steps.writeFile(file: FilePath, text: ToXML())
+    String WriteXMLToFile(String FilePath) {
+        Library.steps.writeFile(file: FilePath, text: ToXML())
 
         return FilePath
     }
@@ -99,8 +99,8 @@ class UnrealTestResult {
         return sw.toString()
     }
 
-    static UnrealTestResult FromFile(Object steps, String FilePath) {
-        String json = steps.readFile(file: FilePath, encoding: "UTF-8")
+    static UnrealTestResult FromFile(String FilePath) {
+        String json = Library.steps.readFile(file: FilePath, encoding: "UTF-8")
         return FromJSON(json.replace("\uFEFF", ""))
     }
 

@@ -1,6 +1,7 @@
 package com.github.cynic1254
 
 class Unreal {
+    static Object steps
     static String config = "Shipping"
     static String platform = "Win64"
     static String enginePath = ""
@@ -8,15 +9,15 @@ class Unreal {
     private static Boolean initialized = false
 
     static void Init(String config, String platform, String enginePath, String projectPath) {
-        ScriptVariables.script.echo("Hello from another file")
         this.config = config
         this.platform = platform
         this.enginePath = enginePath
         this.projectPath = projectPath
         initialized = true
+        steps = Library.steps
     }
 
-    static void BuildPrecompiledProject(Object steps, String outDir) {
+    static void BuildPrecompiledProject(String outDir) {
         if (!initialized)
         {
             Init(steps.env.config as String, steps.env.platform as String, steps.env.enginePath as String, steps.env.projectPath as String)
@@ -24,7 +25,7 @@ class Unreal {
         steps.bat(label: "Build Precompiled Project", script: "\"${enginePath}\\Build\\BatchFiles\\RunUAT.bat\" BuildCookRun -Project=\"${projectPath}\" -NoP4 -nocompileeditor -skipbuildeditor -TargetPlatform=${platform} -Platform=${platform} -ClientConfig=${config} -Cook -Build -Stage -Pak -Archive -Archivedirectory=\\\"${outDir}\\\" -Rocket -Prereqs -iostore -compressed -Package -nocompile -nocompileuat")
     }
 
-    static void BuildBlueprintProject(Object steps, String outDir) {
+    static void BuildBlueprintProject(String outDir) {
         if (!initialized)
         {
             Init(steps.env.config as String, steps.env.platform as String, steps.env.enginePath as String, steps.env.projectPath as String)
@@ -32,7 +33,7 @@ class Unreal {
         steps.bat(label: "Package UE5 project", script: "\"${enginePath}\\Build\\BatchFiles\\RunUAT.bat\" BuildCookRun -Project=\"${projectPath}\" -NoP4 -Distribution -TargetPlatform=${platform} -Platform=${platform} -ClientConfig=${config} -ServerConfig=${config} -Cook -Allmaps -Build -Stage -Pak -Archive -Archivedirectory=\"${outDir}\" -Rocket -Prereqs -Package")
     }
 
-    static void fixupRedirects(Object steps) {
+    static void fixupRedirects() {
         if (!initialized)
         {
             Init(steps.env.config as String, steps.env.platform as String, steps.env.enginePath as String, steps.env.projectPath as String)
@@ -40,7 +41,7 @@ class Unreal {
         steps.bat(label: "Fix up redirectors", script: "\"${enginePath}\\Binaries\\${platform}\\UnrealEditor.exe\" \"${projectPath}\" -run=ResavePackages -fixupredirects -autocheckout -projectonly -unattended -stdout")
     }
 
-    static UnrealTestResult RunAutomationCommand(Object steps, String testCommand, Boolean markUnstableIfFail = true) {
+    static UnrealTestResult RunAutomationCommand(String testCommand, Boolean markUnstableIfFail = true) {
         if (!initialized)
         {
             Init(steps.env.config as String, steps.env.platform as String, steps.env.enginePath as String, steps.env.projectPath as String)
