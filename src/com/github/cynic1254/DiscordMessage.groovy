@@ -175,7 +175,7 @@ class DiscordMessage {
                         )
                 ],
                 allowed_mentions: new Mentions(
-                        users: [AuthorizerID]
+                        users: ["${AuthorizerID}"]
                 ),
                 username: "Steam Auth",
                 avatar_url: "https://e1.pngegg.com/pngimages/855/514/png-clipart-clay-os-6-a-macos-icon-steam-steam-logo-thumbnail.png"

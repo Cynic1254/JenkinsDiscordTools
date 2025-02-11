@@ -4,6 +4,7 @@ class Library {
     static void Init(Object steps)
     {
         this.steps = steps
+        Jenkins.Init(steps)
     }
 
     public static Object steps
