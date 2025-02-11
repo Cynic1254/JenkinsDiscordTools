@@ -53,6 +53,6 @@ class Unreal {
             steps.unstable("Some tests did not pass!")
         }
 
-        return UnrealTestResult.FromFile(steps, "${steps.env.WORKSPACE}\\Logs\\UnitTestsReport\\index.json")
+        return UnrealTestResult.FromFile("${steps.env.WORKSPACE}\\Logs\\UnitTestsReport\\index.json")
     }
 }
