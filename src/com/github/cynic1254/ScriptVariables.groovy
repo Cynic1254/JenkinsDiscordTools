@@ -4,7 +4,8 @@ class ScriptVariables {
     static void Init(Object script)
     {
         this.script = script
+        script.echo("Hello World")
     }
 
-    static Object script
+    public static Object script
 }
