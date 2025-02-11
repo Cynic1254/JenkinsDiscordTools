@@ -8,6 +8,7 @@ class Unreal {
     private static Boolean initialized = false
 
     static void Init(String config, String platform, String enginePath, String projectPath) {
+        ScriptVariables.script.echo("Hello from another file")
         this.config = config
         this.platform = platform
         this.enginePath = enginePath
