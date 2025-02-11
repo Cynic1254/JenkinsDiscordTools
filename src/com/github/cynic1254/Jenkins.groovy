@@ -9,5 +9,5 @@ class Jenkins {
 
     static String jobBaseName = ""
     static String buildURL = ""
-    static Integer buildNumber = -1
+    static String buildNumber = "-1"
 }
