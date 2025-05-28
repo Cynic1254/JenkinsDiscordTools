@@ -52,7 +52,9 @@ class DiscordMessage {
     }
 
     void Send(String webhook) {
-        Library.steps.bat(label: "Send Discord Message", script: "curl -X POST -H \"Content-Type: application/json\" -d \"${JsonOutput.toJson(this).replace('"', '""')}\" ${webhook}")
+        String json = JsonOutput.toJson(this)
+        writeFile file: 'payload.json', text: json
+        Library.steps.bat(label: 'Send Discord Message', script: "curl -X POST -H \"Content-Type: application/json\" -d @payload.json ${webhook}")
     }
 
     static DiscordMessage FromTestResults(UnrealTestResult testResults) {def embed = new Embed()
