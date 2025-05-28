@@ -53,7 +53,7 @@ class DiscordMessage {
 
     void Send(String webhook) {
         String json = JsonOutput.toJson(this)
-        writeFile file: 'payload.json', text: json
+        Library.steps.writeFile(file: 'payload.json', text: json)
         Library.steps.bat(label: 'Send Discord Message', script: "curl -X POST -H \"Content-Type: application/json\" -d @payload.json ${webhook}")
     }
 
